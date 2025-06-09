@@ -1,0 +1,32 @@
+name: Build EXE with PyInstaller
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller opencv-python mediapipe deepface matplotlib pillow
+
+    - name: Build EXE
+      run: |
+        pyinstaller --noconfirm --onefile --windowed PROYECTO29V.PY
+
+    - name: Upload .exe
+      uses: actions/upload-artifact@v3
+      with:
+        name: face-tracker-exe
+        path: dist/PROYECTO29V.exe
