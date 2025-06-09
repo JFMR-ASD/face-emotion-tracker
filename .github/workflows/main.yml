@@ -9,7 +9,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -19,14 +20,27 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pyinstaller opencv-python mediapipe deepface matplotlib pillow
-        pip install tf-keras
+        pip install pyinstaller opencv-python mediapipe deepface matplotlib pillow keras
 
-    - name: Build EXE
+    - name: Create admin manifest file
       run: |
-        pyinstaller --noconfirm --onefile --windowed PROYECTO29V.PY
+        echo ^
+        "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+        <assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>
+          <trustInfo xmlns='urn:schemas-microsoft-com:asm.v3'>
+            <security>
+              <requestedPrivileges>
+                <requestedExecutionLevel level='requireAdministrator' uiAccess='false'/>
+              </requestedPrivileges>
+            </security>
+          </trustInfo>
+        </assembly>" > admin.manifest
 
-    - name: Upload .exe
+    - name: Build EXE with PyInstaller and manifest
+      run: |
+        pyinstaller --noconfirm --onefile --windowed PROYECTO29V.PY --manifest admin.manifest
+
+    - name: Upload .exe artifact
       uses: actions/upload-artifact@v4
       with:
         name: face-tracker-exe
