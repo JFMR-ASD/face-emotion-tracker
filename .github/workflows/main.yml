@@ -26,7 +26,8 @@ jobs:
         pyinstaller --noconfirm --onefile --windowed PROYECTO29V.PY
 
     - name: Upload .exe
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: face-tracker-exe
         path: dist/PROYECTO29V.exe
+
